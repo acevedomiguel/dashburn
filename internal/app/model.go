@@ -49,7 +49,6 @@ type sourceState struct {
 	lastAttempt time.Time
 	lastDone    time.Time
 	nextAllowed time.Time
-	nextTick    time.Time
 }
 
 // nextDelay is the wait before the next automatic read: one interval after the
@@ -164,21 +163,19 @@ func (m *Model) viewOptions() ui.ViewOptions {
 		Warnings:    m.warningsList(),
 		Notice:      m.notice,
 		Kimi: ui.KimiView{
-			Snapshot:    m.kimiSnap,
-			History:     m.kimiHistory,
-			Refreshing:  m.kimiState.refreshing,
-			Spinner:     spinnerFrame,
-			Error:       m.kimiState.err,
-			NextRefresh: m.kimiState.nextTick,
-			Configured:  m.kimiSource != nil,
-			Hint:        m.kimiHint,
+			Snapshot:   m.kimiSnap,
+			History:    m.kimiHistory,
+			Refreshing: m.kimiState.refreshing,
+			Spinner:    spinnerFrame,
+			Error:      m.kimiState.err,
+			Configured: m.kimiSource != nil,
+			Hint:       m.kimiHint,
 		},
 		OpenRouter: ui.OpenRouterView{
 			Snapshot:     m.orSnap,
 			Refreshing:   m.orState.refreshing,
 			Spinner:      spinnerFrame,
 			Error:        m.orState.err,
-			NextRefresh:  m.orState.nextTick,
 			Configured:   m.orSource != nil,
 			Hint:         m.orHint,
 			TableOffset:  m.tableOffset,

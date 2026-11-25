@@ -121,6 +121,10 @@ func meterBar(remaining float64, width int, st Styles) string {
 
 // joinColumns places rendered blocks side by side, one space apart, padding
 // shorter blocks with blank lines so every row lines up.
+//
+// Each column's width is the widest line in that block, not its first line: a
+// block whose first line is short (a section heading, say) would otherwise
+// shift every row that outlives it.
 func joinColumns(blocks ...[]string) []string {
 	height := 0
 	widths := make([]int, len(blocks))
@@ -128,8 +132,10 @@ func joinColumns(blocks ...[]string) []string {
 		if len(b) > height {
 			height = len(b)
 		}
-		if len(b) > 0 {
-			widths[i] = lipgloss.Width(b[0])
+		for _, line := range b {
+			if w := lipgloss.Width(line); w > widths[i] {
+				widths[i] = w
+			}
 		}
 	}
 

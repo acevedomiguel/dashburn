@@ -3,6 +3,7 @@ package ui
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"charm.land/lipgloss/v2"
 )
@@ -76,6 +77,59 @@ func TestRenderShowsCoreFacts(t *testing.T) {
 		if !strings.Contains(out, want) {
 			t.Errorf("render is missing %q", want)
 		}
+	}
+}
+
+func TestUpdatedStampIsSingleMinuteAndRightAligned(t *testing.T) {
+	const width = 150
+	out := Render(fullOptions(width, 46, plainStyles()))
+
+	if got := strings.Count(out, "updated:"); got != 1 {
+		t.Fatalf("want exactly one updated stamp, got %d:\n%s", got, out)
+	}
+	if !strings.Contains(out, "updated: 15:42") {
+		t.Errorf("the stamp should have minute resolution:\n%s", out)
+	}
+	if strings.Contains(out, "15:42:00") {
+		t.Error("the stamp must not show seconds")
+	}
+	if strings.Contains(out, "next ") {
+		t.Error("the next-read countdown must be gone")
+	}
+
+	lines := strings.Split(out, "\n")
+	row, col := findText(lines, "updated:")
+	if row < 0 {
+		t.Fatal("updated stamp is missing")
+	}
+	if col < width/2 {
+		t.Errorf("the updated stamp should sit on the right, found at column %d", col)
+	}
+	if row != 0 {
+		t.Errorf("the updated stamp belongs in the title row, found on row %d", row)
+	}
+}
+
+func TestUpdatedStampUsesTheLatestRead(t *testing.T) {
+	opts := fullOptions(120, 40, plainStyles())
+	opts.Kimi.Snapshot.GeneratedAt = fixedNow()
+	opts.OpenRouter.Snapshot.GeneratedAt = fixedNow().Add(2 * time.Minute)
+	out := Render(opts)
+	if !strings.Contains(out, "updated: 15:44") {
+		t.Errorf("the stamp should track the most recent read:\n%s", out)
+	}
+}
+
+func TestRefreshingProviderIsMarkedWithoutATimestamp(t *testing.T) {
+	opts := fullOptions(120, 40, plainStyles())
+	opts.Kimi.Refreshing = true
+	opts.Kimi.Spinner = "⠋"
+	out := Render(opts)
+	if !strings.Contains(out, "refreshing") {
+		t.Error("a refreshing provider should still be marked")
+	}
+	if got := strings.Count(out, "updated:"); got != 1 {
+		t.Errorf("want exactly one updated stamp while refreshing, got %d", got)
 	}
 }
 
@@ -223,6 +277,39 @@ func TestSplitWidths(t *testing.T) {
 		if sum := got[0] + (c.n - 1) + got[len(got)-1]; c.n == 2 && sum != c.total {
 			t.Fatalf("splitWidths(%d,%d) = %v does not fill %d", c.total, c.n, got, c.total)
 		}
+	}
+}
+
+func TestJoinColumnsPadsToTheWidestLine(t *testing.T) {
+	// The left block's first line is the short one, exactly like a section
+	// heading above a full-width panel; both right-hand rows must still start
+	// in the same column.
+	left := []string{"short", "a much longer line"}
+	out := joinColumns(left, []string{"R", "S"})
+	first := strings.Index(out[0], "R")
+	second := strings.Index(out[1], "S")
+	if first < 0 || second < 0 {
+		t.Fatalf("markers missing:\n%q\n%q", out[0], out[1])
+	}
+	if first != second {
+		t.Fatalf("right block starts at column %d then %d:\n%q\n%q", first, second, out[0], out[1])
+	}
+}
+
+func TestProviderColumnsStayAlignedToTheBottom(t *testing.T) {
+	// The Kimi column is shorter than the OpenRouter one, so the tail rows are
+	// padded blanks: the table's left border must not drift left.
+	out := Render(fullOptions(150, 40, plainStyles()))
+	borders := map[int]bool{}
+	for _, line := range strings.Split(out, "\n") {
+		if i := strings.Index(line, "│ DATE"); i >= 0 {
+			borders[lipgloss.Width(line[:i])] = true
+		}
+	}
+	// Every row of the table shares one left edge; a single column value means
+	// no row drifted.
+	if len(borders) > 1 {
+		t.Fatalf("the daily table's left edge is inconsistent: %v", borders)
 	}
 }
 

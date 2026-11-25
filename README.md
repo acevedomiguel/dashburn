@@ -28,6 +28,9 @@ rotates or revokes a credential.
   `keyring`, `theme`, `color`) and the XDG paths the two applications use.
 - Keeps Kimi Code's local runway history in memory for the current process, so
   the runway and usage sparkline improve across reads without any cache file.
+- Shows one freshness stamp, `updated: HH:MM`, pinned to the right of the title
+  row: minute resolution, the most recent successful read across both providers,
+  and no per-provider countdown.
 
 ### Kimi Code panels
 
