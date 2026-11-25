@@ -1,0 +1,26 @@
+# Local git worktrees and agent scratch
+/.worktrees/
+/.superpowers/
+
+# Build output
+/dashburn
+/dashburn.exe
+/dist/
+
+# Test and coverage artifacts
+*.test
+coverage.out
+
+# Local credential files that must never be committed
+/token
+/token.json
+/management-token
+/api-key
+/credentials.json
+/config.local.yaml
+
+# Editors and OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
