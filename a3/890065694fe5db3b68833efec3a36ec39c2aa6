@@ -1,0 +1,35 @@
+AGENTS.md
+  s_93b7af52afbc2c::t_7c8209fb4be7c8 54-58
+internal/ui/dashboard_test.go
+  s_93b7af52afbc2c::t_f797f5f1093f75 6
+  s_93b7af52afbc2c::t_45fb41c6c4e1a3 83-135
+  s_93b7af52afbc2c::t_4cfc0c0f1d4042 288,290-293
+  s_93b7af52afbc2c::t_df25578ba90aee 283-287,289,294-315
+internal/ui/dashboard.go
+  s_93b7af52afbc2c::t_355ce28ca1663b 17-23,130-131,133-161
+internal/ui/panel.go
+  s_93b7af52afbc2c::t_f572ea3a23a9b1 124-127,135-138
+README.md
+  s_93b7af52afbc2c::t_e74cd04a6e8f25 31-33
+internal/app/model.go
+  s_93b7af52afbc2c::t_a79db12ade5e29 166-172
+internal/ui/kimi.go
+  s_93b7af52afbc2c::t_bbc8ab82cb0967 152-155,161-163,165
+  s_93b7af52afbc2c::t_adc7da0774372e 124-126,129-130,132-135,139,142-143,145-147
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "a3890065694fe5db3b68833efec3a36ec39c2aa6",
+  "prompts": {},
+  "sessions": {
+    "s_93b7af52afbc2c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_dee63a7c0ffeUsyRBgStRRvP5x",
+        "model": "deepseek/deepseek-v4.1-flash"
+      },
+      "human_author": "Miguel Angel Acevedo <acevedomiguel@gmail.com>"
+    }
+  }
+}
