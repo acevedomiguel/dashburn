@@ -59,7 +59,48 @@ previous 30 complete UTC days.
   DashBurn runs with either provider configured; the other shows a short
   "not configured" hint and everything else keeps working.
 
-## Install
+## Installation
+
+### Homebrew (macOS and Linux)
+
+```bash
+brew tap acevedomiguel/dashburn
+brew install --cask dashburn
+dashburn --version
+```
+
+Upgrades arrive through the same tap:
+
+```bash
+brew update
+brew upgrade --cask dashburn
+```
+
+The cask downloads a prebuilt binary rather than compiling from source. That
+binary is not notarized by Apple, so the cask clears the macOS quarantine flag
+after staging; without that step Gatekeeper would kill the binary on first run.
+The tap is a third-party tap, so Homebrew asks you to trust it once:
+
+```bash
+brew trust acevedomiguel/dashburn
+```
+
+### Go
+
+```bash
+go install github.com/acevedomiguel/dashburn/cmd/dashburn@latest
+```
+
+### Prebuilt binaries
+
+Every release publishes Linux, macOS, and Windows archives plus a
+`checksums.txt` file on the GitHub Releases page. Archives contain the binary,
+this README, and the LICENSE; Linux and macOS use `.tar.gz`, Windows uses
+`.zip`. Verify a download with:
+
+```bash
+sha256sum -c checksums.txt --ignore-missing
+```
 
 ### From source
 
@@ -138,6 +179,27 @@ make build      # binary with version metadata
 Tests are synthetic-only: hand-authored fixtures and fake keyrings, clocks, and
 sources. They never touch the network, the real keyring, or your real
 configuration.
+
+## Releases
+
+Releases are driven by squash-merged Conventional Commits on `main`; the pull
+request title is the release commit subject. `semantic-release` derives the
+version from those commits, and GoReleaser publishes the archives, the
+checksums, the GitHub release, and the Homebrew cask in
+[`acevedomiguel/homebrew-dashburn`](https://github.com/acevedomiguel/homebrew-dashburn).
+
+Nothing is versioned by hand: do not create tags, edit generated release
+sections of `CHANGELOG.md`, or hand-publish an artefact. The tap push is
+skipped when `HOMEBREW_TAP_TOKEN` is absent, so a plain release still succeeds
+with only the default `GITHUB_TOKEN`.
+
+Local checks:
+
+```sh
+goreleaser check
+goreleaser release --snapshot --clean   # library-free snapshot build
+npm ci && npm run check:release-notes   # changelog rendering guard
+```
 
 ## Built on
 
