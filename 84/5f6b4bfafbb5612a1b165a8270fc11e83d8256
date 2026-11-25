@@ -1,0 +1,19 @@
+.gitignore
+  s_93b7af52afbc2c::t_eec4829f6df6c9 1-5,7,9-22,24-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "845f6b4bfafbb5612a1b165a8270fc11e83d8256",
+  "prompts": {},
+  "sessions": {
+    "s_93b7af52afbc2c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_dee63a7c0ffeUsyRBgStRRvP5x",
+        "model": "deepseek/deepseek-v4.1-flash"
+      },
+      "human_author": "Miguel Angel Acevedo <acevedomiguel@gmail.com>"
+    }
+  }
+}
