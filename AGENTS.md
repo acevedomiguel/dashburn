@@ -51,6 +51,11 @@ adapts their Go, Charm, and release patterns.
   no ANSI escapes in no-color mode. Clip the footer escape-safely.
 - Providers sit side by side at 96 content columns and above, and stack in one
   scrollable column below it.
+- The frame carries exactly one freshness stamp: `updated: HH:MM` at minute
+  resolution (the most recent successful read across both providers), pinned to
+  the right of the title row. Do not add per-provider timestamps, seconds, or a
+  next-read countdown. A section's own marker (refreshing, not configured) sits
+  beside that section's title, never flush right.
 
 ## Baseline versions
 

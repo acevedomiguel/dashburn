@@ -239,14 +239,6 @@ func TopModels(models []routeburn.ModelUsage, n int) []routeburn.ModelUsage {
 	return append(top, rest)
 }
 
-// FormatFreshness renders "updated 15:04:05" for a live reading.
-func FormatFreshness(generatedAt, now time.Time) string {
-	if generatedAt.IsZero() {
-		return ""
-	}
-	return "updated " + generatedAt.In(now.Location()).Format("15:04:05")
-}
-
 // FormatCountdown renders a short, second-resolution wait.
 func FormatCountdown(d time.Duration) string {
 	if d <= 0 {

@@ -251,7 +251,6 @@ func (m *Model) armKimiTick() tea.Cmd {
 	}
 	now := m.now()
 	delay := m.kimiState.nextDelay(now, m.cfg.KimiInterval)
-	m.kimiState.nextTick = now.Add(delay)
 	return tea.Tick(delay, func(time.Time) tea.Msg { return kimiTickMsg{} })
 }
 
@@ -262,7 +261,6 @@ func (m *Model) armORTick() tea.Cmd {
 	}
 	now := m.now()
 	delay := m.orState.nextDelay(now, m.cfg.OpenRouterInterval)
-	m.orState.nextTick = now.Add(delay)
 	return tea.Tick(delay, func(time.Time) tea.Msg { return orTickMsg{} })
 }
 

@@ -14,14 +14,13 @@ import (
 
 // KimiView is the Kimi Code rendering state for one frame.
 type KimiView struct {
-	Snapshot    *kimiburn.Snapshot
-	History     map[kimiburn.QuotaKey][]kimiburn.Sample
-	Refreshing  bool
-	Spinner     string
-	Error       string
-	NextRefresh time.Time
-	Configured  bool
-	Hint        string
+	Snapshot   *kimiburn.Snapshot
+	History    map[kimiburn.QuotaKey][]kimiburn.Sample
+	Refreshing bool
+	Spinner    string
+	Error      string
+	Configured bool
+	Hint       string
 }
 
 // OpenRouterView is the OpenRouter rendering state for one frame.
@@ -30,7 +29,6 @@ type OpenRouterView struct {
 	Refreshing   bool
 	Spinner      string
 	Error        string
-	NextRefresh  time.Time
 	Configured   bool
 	Hint         string
 	TableOffset  int
@@ -129,9 +127,38 @@ func composeBody(opts ViewOptions, lay Layout, bodyHeight int) []string {
 	return stackBlocks([][]string{left, right})
 }
 
-// titleRow centres the app title across the terminal width.
+// titleRow centres the app title and pins the frame's single freshness stamp to
+// the right-hand edge.
 func titleRow(opts ViewOptions) string {
-	return lipgloss.PlaceHorizontal(opts.Width, lipgloss.Center, opts.Styles.Title.Render(truncate(titleText, opts.Width)))
+	title := opts.Styles.Title.Render(truncate(titleText, opts.Width))
+	stamp := updatedText(opts)
+	if stamp == "" {
+		return lipgloss.PlaceHorizontal(opts.Width, lipgloss.Center, title)
+	}
+	rendered := opts.Styles.Muted.Render(stamp)
+	room := opts.Width - lipgloss.Width(rendered) - 1
+	if room < 1 {
+		return lipgloss.PlaceHorizontal(opts.Width, lipgloss.Center, title)
+	}
+	head := lipgloss.PlaceHorizontal(room, lipgloss.Center, opts.Styles.Title.Render(truncate(titleText, room)))
+	return head + " " + rendered
+}
+
+// updatedText is the dashboard's one freshness stamp: the most recent
+// successful read across both providers, at minute resolution. There is no
+// per-provider timestamp and no next-read countdown.
+func updatedText(opts ViewOptions) string {
+	var latest time.Time
+	if opts.Kimi.Snapshot != nil && opts.Kimi.Snapshot.GeneratedAt.After(latest) {
+		latest = opts.Kimi.Snapshot.GeneratedAt
+	}
+	if opts.OpenRouter.Snapshot != nil && opts.OpenRouter.Snapshot.GeneratedAt.After(latest) {
+		latest = opts.OpenRouter.Snapshot.GeneratedAt
+	}
+	if latest.IsZero() {
+		return ""
+	}
+	return "updated: " + latest.In(opts.Now.Location()).Format("15:04")
 }
 
 // padLine applies the layout padding so every body row spans the terminal.

@@ -121,83 +121,48 @@ func runwayStyle(runway kimiburn.RunwayEstimate, st Styles) lipgloss.Style {
 	return st.Value
 }
 
-// kimiStatus is the right-hand freshness string for the Kimi section.
+// kimiStatus is the compact right-hand marker for the Kimi section: only the
+// provider's own exceptional state. The frame's timestamp is shown once, in the
+// title row, so no freshness or countdown text belongs here.
 func kimiStatus(opts ViewOptions) string {
 	k := opts.Kimi
-	if !k.Configured {
+	switch {
+	case !k.Configured:
 		return "not configured"
-	}
-	var parts []string
-	if k.Refreshing {
-		parts = append(parts, k.Spinner+" refreshing")
-	}
-	if k.Snapshot != nil {
-		if fresh := FormatFreshness(k.Snapshot.GeneratedAt, opts.Now); fresh != "" {
-			parts = append(parts, fresh)
-		}
-	}
-	if !k.NextRefresh.IsZero() && k.NextRefresh.After(opts.Now) {
-		parts = append(parts, "next "+FormatCountdown(k.NextRefresh.Sub(opts.Now)))
-	}
-	if k.Error != "" {
-		parts = append(parts, "error")
-	}
-	return joinStatus(parts, k.Snapshot == nil && !k.Refreshing)
-}
-
-// openRouterStatus is the right-hand freshness string for the OpenRouter
-// section.
-func openRouterStatus(opts ViewOptions) string {
-	o := opts.OpenRouter
-	if !o.Configured {
-		return "not configured"
-	}
-	var parts []string
-	if o.Refreshing {
-		parts = append(parts, o.Spinner+" refreshing")
-	}
-	if o.Snapshot != nil {
-		if fresh := FormatFreshness(o.Snapshot.GeneratedAt, opts.Now); fresh != "" {
-			parts = append(parts, fresh)
-		}
-	}
-	if !o.NextRefresh.IsZero() && o.NextRefresh.After(opts.Now) {
-		parts = append(parts, "next "+FormatCountdown(o.NextRefresh.Sub(opts.Now)))
-	}
-	if o.Error != "" {
-		parts = append(parts, "error")
-	}
-	return joinStatus(parts, o.Snapshot == nil && !o.Refreshing)
-}
-
-func joinStatus(parts []string, loading bool) string {
-	if len(parts) == 0 {
-		if loading {
-			return "loading…"
-		}
+	case k.Refreshing:
+		return strings.TrimSpace(k.Spinner + " refreshing")
+	default:
 		return ""
 	}
-	out := ""
-	for i, p := range parts {
-		if i > 0 {
-			out += " · "
-		}
-		out += p
-	}
-	return out
 }
 
-// sectionHeader renders a provider heading with its freshness flush right.
+// openRouterStatus is the compact right-hand marker for the OpenRouter section.
+func openRouterStatus(opts ViewOptions) string {
+	o := opts.OpenRouter
+	switch {
+	case !o.Configured:
+		return "not configured"
+	case o.Refreshing:
+		return strings.TrimSpace(o.Spinner + " refreshing")
+	default:
+		return ""
+	}
+}
+
+// sectionHeader renders a provider heading with its state marker tucked right
+// after the title. The marker is deliberately not flush right: the only thing
+// that belongs on the right-hand edge is the frame's single "updated" stamp, so
+// a section marker must sit with the section it belongs to.
 func sectionHeader(title, status string, width int, st Styles) string {
 	head := st.Title.Render(title)
 	if status == "" {
 		return head
 	}
-	gap := width - lipgloss.Width(head) - lipgloss.Width(status)
-	if gap < 1 {
-		return head + "  " + st.Muted.Render(status)
+	available := width - lipgloss.Width(head) - 2
+	if available < 1 {
+		return head
 	}
-	return head + strings.Repeat(" ", gap) + st.Muted.Render(status)
+	return head + "  " + st.Muted.Render(truncate(status, available))
 }
 
 // hintBlock renders a provider's "not configured" guidance, wrapped to width.
