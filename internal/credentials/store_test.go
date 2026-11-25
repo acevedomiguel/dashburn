@@ -153,10 +153,23 @@ func TestSecretsListsEveryConfiguredValue(t *testing.T) {
 }
 
 func TestRedactorScrubsConfiguredSecret(t *testing.T) {
-	r := NewRedactor("sk-or-v1-abcdef0123456789")
-	got := r.Redact("request failed with Authorization: Bearer sk-or-v1-abcdef0123456789")
-	if got == "" || contains(got, "abcdef0123456789") {
+	// Deliberately not an sk-or-v1- shaped value: the CI credential scan
+	// rejects that shape, and the redactor's literal match needs no realism.
+	const secret = "or-test-secret-9f2c1a4b"
+	r := NewRedactor(secret)
+	got := r.Redact("request failed with Authorization: Bearer " + secret)
+	if got == "" || contains(got, "9f2c1a4b") {
 		t.Fatalf("secret was not redacted: %q", got)
+	}
+}
+
+func TestRedactScrubsGenericKeyShape(t *testing.T) {
+	got := Redact("using sk-abc123def456 with Bearer tok_abcdef")
+	if contains(got, "sk-abc123def456") {
+		t.Fatalf("generic sk- key was not redacted: %q", got)
+	}
+	if contains(got, "tok_abcdef") {
+		t.Fatalf("generic bearer token was not redacted: %q", got)
 	}
 }
 

@@ -11,6 +11,9 @@
 *.test
 coverage.out
 
+# Node release tooling
+node_modules/
+
 # Local credential files that must never be committed
 /token
 /token.json
