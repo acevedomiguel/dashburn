@@ -87,3 +87,18 @@ func TestParseAcceptsMinimumRefresh(t *testing.T) {
 		t.Fatalf("refresh = %s", opts.refresh)
 	}
 }
+
+// The help output names the shared engine the binary embeds, so a support
+// report can identify it after both engines moved to their own module.
+func TestHelpReportsEngineVersion(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	if code := run([]string{"--help"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("exit code = %d, want 0", code)
+	}
+	if !strings.Contains(stdout.String(), "github.com/acevedomiguel/burnblocks") {
+		t.Errorf("help must name the engine module:\n%s", stdout.String())
+	}
+	if got := engineVersion(); got == "" {
+		t.Error("engineVersion must never be empty")
+	}
+}

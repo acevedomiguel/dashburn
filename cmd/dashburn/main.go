@@ -236,5 +236,6 @@ func printUsage(w io.Writer) {
 		"  --refresh <duration>      Refresh interval for both providers (minimum 10s, 0 disables)\n"+
 		"  --no-color                Disable colored output\n"+
 		"\nDashBurn is read-only and keeps no cache. It reads the credentials the\n"+
-		"existing kimiburn and routeburn applications store.\n")
+		"existing kimiburn and routeburn applications store.\n"+
+		"\nEngine: "+engineModule+" "+engineVersion()+"\n")
 }
