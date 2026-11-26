@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/acevedomiguel/kimiburn"
-	"github.com/acevedomiguel/routeburn"
+	"github.com/acevedomiguel/burnblocks/kimi"
+	"github.com/acevedomiguel/burnblocks/openrouter"
 )
 
 // --- Kimi Code formatting (kimiburn's helpers are not part of its public
@@ -47,7 +47,7 @@ func FormatReset(reset *time.Time, now time.Time) string {
 }
 
 // FormatRunway renders the local Kimi estimate without implying exactness.
-func FormatRunway(runway kimiburn.RunwayEstimate, key kimiburn.QuotaKey) string {
+func FormatRunway(runway kimi.RunwayEstimate, key kimi.QuotaKey) string {
 	switch runway.Status {
 	case "depleted":
 		return "Depleted"
@@ -70,13 +70,13 @@ func FormatRunway(runway kimiburn.RunwayEstimate, key kimiburn.QuotaKey) string 
 }
 
 // FormatBurn converts the canonical ratio/second burn into the panel's period.
-func FormatBurn(runway kimiburn.RunwayEstimate, key kimiburn.QuotaKey) string {
+func FormatBurn(runway kimi.RunwayEstimate, key kimi.QuotaKey) string {
 	if runway.BurnRatioPerSecond == nil || math.IsNaN(*runway.BurnRatioPerSecond) || math.IsInf(*runway.BurnRatioPerSecond, 0) {
 		return "Not reported"
 	}
 	factor := 8640000.0
 	unit := "%/day"
-	if key == kimiburn.QuotaLimit5h {
+	if key == kimi.QuotaLimit5h {
 		factor, unit = 360000, "%/h"
 	}
 	value := *runway.BurnRatioPerSecond * factor
@@ -181,15 +181,15 @@ func ShortModelName(model string) string {
 }
 
 // FormatDaysRemaining renders the headline OpenRouter runway value.
-func FormatDaysRemaining(est routeburn.RunwayEstimate) string {
+func FormatDaysRemaining(est openrouter.RunwayEstimate) string {
 	switch est.Basis {
-	case routeburn.BasisUnavailable:
+	case openrouter.BasisUnavailable:
 		return "Unavailable"
-	case routeburn.BasisNoRecentSpend:
+	case openrouter.BasisNoRecentSpend:
 		return "No recent spend"
-	case routeburn.BasisBeyondHorizon:
+	case openrouter.BasisBeyondHorizon:
 		return "Beyond horizon"
-	case routeburn.BasisDepleted:
+	case openrouter.BasisDepleted:
 		return "0 days"
 	}
 	if est.DaysRemaining == nil {
@@ -199,16 +199,16 @@ func FormatDaysRemaining(est routeburn.RunwayEstimate) string {
 }
 
 // FormatDepletionDate renders the approximate depletion date.
-func FormatDepletionDate(est routeburn.RunwayEstimate) string {
-	if est.Basis != routeburn.BasisFinite || est.DepletionDate == nil {
+func FormatDepletionDate(est openrouter.RunwayEstimate) string {
+	if est.Basis != openrouter.BasisFinite || est.DepletionDate == nil {
 		return ""
 	}
 	return "~" + est.DepletionDate.Format("Jan 02")
 }
 
 // SortModels returns rows ordered by spend descending, ties broken by name.
-func SortModels(models []routeburn.ModelUsage) []routeburn.ModelUsage {
-	out := make([]routeburn.ModelUsage, len(models))
+func SortModels(models []openrouter.ModelUsage) []openrouter.ModelUsage {
+	out := make([]openrouter.ModelUsage, len(models))
 	copy(out, models)
 	sort.SliceStable(out, func(i, j int) bool {
 		if out[i].CreditSpend != out[j].CreditSpend {
@@ -221,7 +221,7 @@ func SortModels(models []routeburn.ModelUsage) []routeburn.ModelUsage {
 
 // TopModels limits rows to the top n by spend, folding the remainder into an
 // "Other (remaining)" row.
-func TopModels(models []routeburn.ModelUsage, n int) []routeburn.ModelUsage {
+func TopModels(models []openrouter.ModelUsage, n int) []openrouter.ModelUsage {
 	if n <= 0 {
 		return nil
 	}
@@ -229,9 +229,9 @@ func TopModels(models []routeburn.ModelUsage, n int) []routeburn.ModelUsage {
 	if len(sorted) <= n {
 		return sorted
 	}
-	top := make([]routeburn.ModelUsage, 0, n)
+	top := make([]openrouter.ModelUsage, 0, n)
 	top = append(top, sorted[:n-1]...)
-	rest := routeburn.ModelUsage{Model: "Other (remaining)"}
+	rest := openrouter.ModelUsage{Model: "Other (remaining)"}
 	for _, m := range sorted[n-1:] {
 		rest.CreditSpend += m.CreditSpend
 		rest.Tokens += m.Tokens

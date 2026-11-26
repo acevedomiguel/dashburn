@@ -8,14 +8,14 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/acevedomiguel/kimiburn"
-	"github.com/acevedomiguel/routeburn"
+	"github.com/acevedomiguel/burnblocks/kimi"
+	"github.com/acevedomiguel/burnblocks/openrouter"
 )
 
 // KimiView is the Kimi Code rendering state for one frame.
 type KimiView struct {
-	Snapshot   *kimiburn.Snapshot
-	History    map[kimiburn.QuotaKey][]kimiburn.Sample
+	Snapshot   *kimi.Snapshot
+	History    map[kimi.QuotaKey][]kimi.Sample
 	Refreshing bool
 	Spinner    string
 	Error      string
@@ -25,7 +25,7 @@ type KimiView struct {
 
 // OpenRouterView is the OpenRouter rendering state for one frame.
 type OpenRouterView struct {
-	Snapshot     *routeburn.Snapshot
+	Snapshot     *openrouter.Snapshot
 	Refreshing   bool
 	Spinner      string
 	Error        string

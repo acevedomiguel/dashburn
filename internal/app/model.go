@@ -10,10 +10,10 @@ import (
 	"charm.land/bubbles/v2/spinner"
 	tea "charm.land/bubbletea/v2"
 
+	"github.com/acevedomiguel/burnblocks/kimi"
+	"github.com/acevedomiguel/burnblocks/openrouter"
 	"github.com/acevedomiguel/dashburn/internal/provider"
 	"github.com/acevedomiguel/dashburn/internal/ui"
-	"github.com/acevedomiguel/kimiburn"
-	"github.com/acevedomiguel/routeburn"
 )
 
 // Config is the resolved, non-secret application configuration.
@@ -86,11 +86,11 @@ type Model struct {
 	kimiHint   string
 	orHint     string
 
-	kimiSnap    *kimiburn.Snapshot
-	kimiHistory map[kimiburn.QuotaKey][]kimiburn.Sample
+	kimiSnap    *kimi.Snapshot
+	kimiHistory map[kimi.QuotaKey][]kimi.Sample
 	kimiState   sourceState
 
-	orSnap  *routeburn.Snapshot
+	orSnap  *openrouter.Snapshot
 	orState sourceState
 
 	warnings []string
@@ -214,7 +214,7 @@ func (m *Model) newView(content, title string) tea.View {
 func (m *Model) windowTitle() string {
 	var parts []string
 	if m.kimiSnap != nil {
-		if quota, ok := m.kimiSnap.Quotas[kimiburn.QuotaLimit5h]; ok {
+		if quota, ok := m.kimiSnap.Quotas[kimi.QuotaLimit5h]; ok {
 			if remaining := remainingRatio(quota.UsedRatio); remaining != nil {
 				parts = append(parts, "5h "+ui.FormatPercent(remaining))
 			}

@@ -6,12 +6,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/acevedomiguel/kimiburn"
-	"github.com/acevedomiguel/routeburn"
+	"github.com/acevedomiguel/burnblocks/kimi"
+	"github.com/acevedomiguel/burnblocks/openrouter"
 )
 
 func TestNewKimiAcceptsDefaultBase(t *testing.T) {
-	src, err := NewKimi(kimiburn.DefaultBaseURL, "token")
+	src, err := NewKimi(kimi.DefaultBaseURL, "token")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -31,7 +31,7 @@ func TestNewKimiRejectsUnknownBaseURL(t *testing.T) {
 
 func TestNewKimiRejectsOverseasBaseWhenSelected(t *testing.T) {
 	// The overseas base is a valid, explicitly selected alternative.
-	if _, err := NewKimi(kimiburn.OverseasBaseURL, "token"); err != nil {
+	if _, err := NewKimi(kimi.OverseasBaseURL, "token"); err != nil {
 		t.Fatalf("overseas base should be accepted: %v", err)
 	}
 }
@@ -43,8 +43,8 @@ func TestOpenRouterFetchWithoutManagementKeyFails(t *testing.T) {
 	}
 	// The missing key is reported by the fetch boundary, before any network
 	// request is made.
-	if _, err := src.Fetch(context.Background(), time.Now()); !errors.Is(err, routeburn.ErrMissingManagementKey) {
-		t.Fatalf("err = %v, want routeburn.ErrMissingManagementKey", err)
+	if _, err := src.Fetch(context.Background(), time.Now()); !errors.Is(err, openrouter.ErrMissingManagementKey) {
+		t.Fatalf("err = %v, want openrouter.ErrMissingManagementKey", err)
 	}
 }
 

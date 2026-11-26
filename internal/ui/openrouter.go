@@ -7,7 +7,7 @@ import (
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/acevedomiguel/routeburn"
+	"github.com/acevedomiguel/burnblocks/openrouter"
 )
 
 // minTableHeight is the smallest daily table panel worth drawing: two borders,
@@ -64,7 +64,7 @@ func openRouterSection(opts ViewOptions, width, bodyHeight int) []string {
 
 // creditsPanel renders the account credit panel. Freshness lives in the
 // section header, so the panel itself carries no caption.
-func creditsPanel(snap *routeburn.Snapshot, opts ViewOptions, width int) []string {
+func creditsPanel(snap *openrouter.Snapshot, opts ViewOptions, width int) []string {
 	t := opts.Styles
 	inner := maxInt(width-4, 1)
 
@@ -82,7 +82,7 @@ func creditsPanel(snap *routeburn.Snapshot, opts ViewOptions, width int) []strin
 		leader("Remaining", FormatCredits(snap.Account.Remaining), inner, t),
 		leaderValue("Runway", runway, inner, t, runwayStyle),
 	}
-	if rw.Basis == routeburn.BasisUnavailable {
+	if rw.Basis == openrouter.BasisUnavailable {
 		rows = append(rows, leader("Daily burn", "analytics unavailable", inner, t))
 	} else if rw.DailyBurn > 0 {
 		rows = append(rows, leader("Daily burn", FormatCredits(rw.DailyBurn)+"/day", inner, t))
@@ -91,7 +91,7 @@ func creditsPanel(snap *routeburn.Snapshot, opts ViewOptions, width int) []strin
 }
 
 // last30Panel renders the 30-day summary.
-func last30Panel(snap *routeburn.Snapshot, opts ViewOptions, width int) []string {
+func last30Panel(snap *openrouter.Snapshot, opts ViewOptions, width int) []string {
 	t := opts.Styles
 	inner := maxInt(width-4, 1)
 
@@ -111,12 +111,12 @@ func last30Panel(snap *routeburn.Snapshot, opts ViewOptions, width int) []string
 }
 
 // hasTokenSplit reports whether the API reported any part of the token split.
-func hasTokenSplit(snap *routeburn.Snapshot) bool {
+func hasTokenSplit(snap *openrouter.Snapshot) bool {
 	return snap.TokensPrompt > 0 || snap.TokensCompletion > 0 || snap.CachedTokens > 0 || snap.ReasoningTokens > 0
 }
 
 // tokensPanel renders the prompt/completion/cached/reasoning split.
-func tokensPanel(snap *routeburn.Snapshot, opts ViewOptions, width int) []string {
+func tokensPanel(snap *openrouter.Snapshot, opts ViewOptions, width int) []string {
 	t := opts.Styles
 	inner := maxInt(width-4, 1)
 
@@ -161,7 +161,7 @@ func tokensPanel(snap *routeburn.Snapshot, opts ViewOptions, width int) []string
 }
 
 // modelsPanel renders the model spend breakdown.
-func modelsPanel(snap *routeburn.Snapshot, opts ViewOptions, width int) []string {
+func modelsPanel(snap *openrouter.Snapshot, opts ViewOptions, width int) []string {
 	t := opts.Styles
 	inner := maxInt(width-4, 1)
 
@@ -186,7 +186,7 @@ func modelsPanel(snap *routeburn.Snapshot, opts ViewOptions, width int) []string
 }
 
 // modelRow renders one model as "name ······· $2.61 ▇▇▇▇ 52%".
-func modelRow(m routeburn.ModelUsage, total float64, width int, t Styles) string {
+func modelRow(m openrouter.ModelUsage, total float64, width int, t Styles) string {
 	name := ShortModelName(m.Model)
 	spend := FormatCredits(m.CreditSpend)
 	ratio := 0.0
@@ -249,7 +249,7 @@ type dailyColumn struct {
 
 // dailyTablePanel renders the daily credit spend as a bordered table, newest
 // day first, with a pinned total row. It returns exactly height lines.
-func dailyTablePanel(daily []routeburn.DailyUsage, opts ViewOptions, width, height int) []string {
+func dailyTablePanel(daily []openrouter.DailyUsage, opts ViewOptions, width, height int) []string {
 	st := opts.Styles
 	height = maxInt(height, minTableHeight)
 	inner := maxInt(width-4, 1)
@@ -261,7 +261,7 @@ func dailyTablePanel(daily []routeburn.DailyUsage, opts ViewOptions, width, heig
 	cols := dailyColumns(inner)
 	dataRows := maxInt(height-5, 1)
 
-	newest := make([]routeburn.DailyUsage, 0, len(daily))
+	newest := make([]openrouter.DailyUsage, 0, len(daily))
 	for i := len(daily) - 1; i >= 0; i-- {
 		newest = append(newest, daily[i])
 	}
@@ -340,7 +340,7 @@ func dailyRow(cells []string, cols []dailyColumn) string {
 }
 
 // dayCells renders one day's values in column order.
-func dayCells(d routeburn.DailyUsage) []string {
+func dayCells(d openrouter.DailyUsage) []string {
 	return []string{
 		d.Day.Format("Jan 02"),
 		FormatCredits(d.CreditSpend),
@@ -360,7 +360,7 @@ func formatCacheRate(cached, prompt int64) string {
 }
 
 // totalRow pins the all-days totals under the visible window.
-func totalRow(daily []routeburn.DailyUsage, cols []dailyColumn, st Styles) string {
+func totalRow(daily []openrouter.DailyUsage, cols []dailyColumn, st Styles) string {
 	var spend float64
 	var tokens, reqs, cached, prompt int64
 	for _, d := range daily {
@@ -396,7 +396,7 @@ func padCell(s string, width int, right bool) string {
 }
 
 // peakSpend is the largest single-day spend in the series.
-func peakSpend(daily []routeburn.DailyUsage) float64 {
+func peakSpend(daily []openrouter.DailyUsage) float64 {
 	peak := 0.0
 	for _, d := range daily {
 		if d.CreditSpend > peak {

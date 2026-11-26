@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/acevedomiguel/kimiburn"
-	"github.com/acevedomiguel/routeburn"
+	"github.com/acevedomiguel/burnblocks/kimi"
+	"github.com/acevedomiguel/burnblocks/openrouter"
 )
 
 func TestFormatPercentDistinguishesMissingFromZero(t *testing.T) {
@@ -34,17 +34,17 @@ func TestFormatCountNeverInventsZero(t *testing.T) {
 
 func TestFormatRunwayStates(t *testing.T) {
 	cases := []struct {
-		est  kimiburn.RunwayEstimate
+		est  kimi.RunwayEstimate
 		want string
 	}{
-		{kimiburn.RunwayEstimate{Status: "depleted"}, "Depleted"},
-		{kimiburn.RunwayEstimate{Status: "beyond_reset"}, "Beyond this reset"},
-		{kimiburn.RunwayEstimate{Status: "no_consumption"}, "No consumption observed"},
-		{kimiburn.RunwayEstimate{Status: "finite", Seconds: floatPtr(5400)}, "1h 30m"},
-		{kimiburn.RunwayEstimate{Status: "unavailable", Reason: "insufficient_samples"}, "Unavailable · insufficient samples"},
+		{kimi.RunwayEstimate{Status: "depleted"}, "Depleted"},
+		{kimi.RunwayEstimate{Status: "beyond_reset"}, "Beyond this reset"},
+		{kimi.RunwayEstimate{Status: "no_consumption"}, "No consumption observed"},
+		{kimi.RunwayEstimate{Status: "finite", Seconds: floatPtr(5400)}, "1h 30m"},
+		{kimi.RunwayEstimate{Status: "unavailable", Reason: "insufficient_samples"}, "Unavailable · insufficient samples"},
 	}
 	for _, c := range cases {
-		if got := FormatRunway(c.est, kimiburn.QuotaLimit5h); got != c.want {
+		if got := FormatRunway(c.est, kimi.QuotaLimit5h); got != c.want {
 			t.Errorf("FormatRunway(%v) = %q, want %q", c.est.Status, got, c.want)
 		}
 	}
@@ -66,11 +66,11 @@ func TestFormatCreditsAndTokens(t *testing.T) {
 }
 
 func TestFormatDaysRemainingBases(t *testing.T) {
-	if got := FormatDaysRemaining(routeburn.RunwayEstimate{Basis: routeburn.BasisUnavailable}); got != "Unavailable" {
+	if got := FormatDaysRemaining(openrouter.RunwayEstimate{Basis: openrouter.BasisUnavailable}); got != "Unavailable" {
 		t.Errorf("unavailable = %q", got)
 	}
 	days := 102.0
-	if got := FormatDaysRemaining(routeburn.RunwayEstimate{Basis: routeburn.BasisFinite, DaysRemaining: &days}); got != "102 days" {
+	if got := FormatDaysRemaining(openrouter.RunwayEstimate{Basis: openrouter.BasisFinite, DaysRemaining: &days}); got != "102 days" {
 		t.Errorf("finite = %q", got)
 	}
 }
@@ -87,8 +87,8 @@ func TestShortModelName(t *testing.T) {
 func TestTimelineRowMarksSafeWhenBeyondReset(t *testing.T) {
 	now := fixedNow()
 	reset := now.Add(2 * time.Hour)
-	quota := kimiburn.QuotaReading{ResetAt: timePtr(reset)}
-	row, ok := timelineRow(quota, kimiburn.RunwayEstimate{Status: "beyond_reset"}, 60, now, plainStyles())
+	quota := kimi.QuotaReading{ResetAt: timePtr(reset)}
+	row, ok := timelineRow(quota, kimi.RunwayEstimate{Status: "beyond_reset"}, 60, now, plainStyles())
 	if !ok {
 		t.Fatal("expected a timeline row")
 	}
@@ -101,7 +101,7 @@ func TestCurrentPeriodFiltersOtherResets(t *testing.T) {
 	now := fixedNow()
 	thisReset := now.Add(time.Hour)
 	otherReset := now.Add(48 * time.Hour)
-	samples := []kimiburn.Sample{
+	samples := []kimi.Sample{
 		{ObservedAt: now.Add(-time.Minute), UsedRatio: 0.1, ResetAt: thisReset},
 		{ObservedAt: now, UsedRatio: 0.2, ResetAt: otherReset},
 	}
