@@ -1,0 +1,54 @@
+internal/config/config.go
+  s_58b6f55c0833f4::t_401165b162021b 254-256
+  s_58b6f55c0833f4::t_1031bec04fcda7 18,62
+go.mod
+  s_58b6f55c0833f4::t_1031bec04fcda7 15
+internal/ui/fixture_test.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 6-7,24,29-30,32-36,38-39,44,50,52-53,61,64,70,82-83,85-86,88,100,106
+internal/ui/format.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 11-12,50,73,79,184,186,188,190,192,202-203,210-211,224,232,234
+internal/provider/provider_test.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 9-10,14,34,46-47
+internal/ui/format_test.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 7-8,37,40-44,47,69,73,90-91,104
+internal/config/config_test.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 9,31,51
+internal/ui/kimi.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 8,14,39,41-42,44-45,47-48,117
+internal/app/model.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 13-14,89-90,93,217
+internal/app/update.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 12,32
+internal/provider/provider.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 12-13,19-20,31,38-39,45,49,59,78-79,86,88,90,100,104,109,126,130,132
+README.md
+  s_58b6f55c0833f4::t_d185e690be4c3d 6-11,210-214
+AGENTS.md
+  s_58b6f55c0833f4::t_c0d1a98d99e35e 3-7,30-34,67-69
+internal/ui/trend.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 10,23,68,100,134,138
+internal/ui/openrouter.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 10,67,85,94,114,119,164,189,252,264,343,363,399
+internal/ui/dashboard.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 11-12,17-18,28
+internal/app/model_test.go
+  s_58b6f55c0833f4::t_1031bec04fcda7 12-13,39,45,58,60-61,63,68,70,72,75,77,80
+go.sum
+  s_58b6f55c0833f4::t_05a63fb59620db 7-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "06e70a1378ccfb26e8e11be331151206ac2480a1",
+  "prompts": {},
+  "sessions": {
+    "s_58b6f55c0833f4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_de8e37bb1ffeg7g6B9LpPtCNn5",
+        "model": "deepseek/deepseek-v4.1-flash"
+      },
+      "human_author": "Miguel Angel Acevedo <acevedomiguel@gmail.com>"
+    }
+  }
+}
