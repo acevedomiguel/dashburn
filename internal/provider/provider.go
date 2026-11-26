@@ -9,15 +9,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/acevedomiguel/kimiburn"
-	"github.com/acevedomiguel/routeburn"
+	"github.com/acevedomiguel/burnblocks/kimi"
+	"github.com/acevedomiguel/burnblocks/openrouter"
 )
 
 // KimiResult is one Kimi reading plus the retained local sample history the
 // trend view draws.
 type KimiResult struct {
-	Snapshot kimiburn.Snapshot
-	History  map[kimiburn.QuotaKey][]kimiburn.Sample
+	Snapshot kimi.Snapshot
+	History  map[kimi.QuotaKey][]kimi.Sample
 }
 
 // KimiSource is the read-only Kimi Code boundary DashBurn depends on.
@@ -28,25 +28,25 @@ type KimiSource interface {
 
 // OpenRouterSource is the read-only OpenRouter boundary DashBurn depends on.
 type OpenRouterSource interface {
-	Fetch(ctx context.Context, now time.Time) (routeburn.Snapshot, error)
+	Fetch(ctx context.Context, now time.Time) (openrouter.Snapshot, error)
 	NextRefreshAllowed() time.Time
 }
 
 // Kimi polls one Kimi Code account through the kimiburn library.
 type Kimi struct {
 	mu     sync.Mutex
-	source kimiburn.UsageSource
-	state  kimiburn.StoredState
+	source kimi.UsageSource
+	state  kimi.StoredState
 }
 
 // NewKimi builds a Kimi source from an explicitly supplied base URL and token.
 // It reads no environment, keyring, configuration, or cache.
 func NewKimi(baseURL, token string) (*Kimi, error) {
-	source, err := kimiburn.NewSource(baseURL, token)
+	source, err := kimi.NewSource(baseURL, token)
 	if err != nil {
 		return nil, err
 	}
-	return &Kimi{source: source, state: kimiburn.EmptyStoredState()}, nil
+	return &Kimi{source: source, state: kimi.EmptyStoredState()}, nil
 }
 
 // Fetch performs one serialised read and returns the snapshot with the retained
@@ -56,7 +56,7 @@ func (k *Kimi) Fetch(ctx context.Context, now time.Time) (KimiResult, error) {
 	k.mu.Lock()
 	defer k.mu.Unlock()
 
-	snapshot, err := kimiburn.Fetch(ctx, k.source, &k.state)
+	snapshot, err := kimi.Fetch(ctx, k.source, &k.state)
 	if err != nil {
 		return KimiResult{}, err
 	}
@@ -75,19 +75,19 @@ func (k *Kimi) NextRefreshAllowed() time.Time {
 // OpenRouter polls one OpenRouter account through the routeburn library.
 type OpenRouter struct {
 	mu     sync.Mutex
-	client *routeburn.Client
-	prev   *routeburn.Snapshot
+	client *openrouter.Client
+	prev   *openrouter.Snapshot
 }
 
 // NewOpenRouter builds an OpenRouter source from the caller-supplied keys. The
 // management key is required; the regular API key is optional. It reads no
 // environment, keyring, configuration, or cache.
 func NewOpenRouter(managementKey, apiKey string) (*OpenRouter, error) {
-	opts := []routeburn.Option{routeburn.WithManagementKey(managementKey)}
+	opts := []openrouter.Option{openrouter.WithManagementKey(managementKey)}
 	if apiKey != "" {
-		opts = append(opts, routeburn.WithAPIKey(apiKey))
+		opts = append(opts, openrouter.WithAPIKey(apiKey))
 	}
-	client, err := routeburn.NewClient(opts...)
+	client, err := openrouter.NewClient(opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,16 +97,16 @@ func NewOpenRouter(managementKey, apiKey string) (*OpenRouter, error) {
 // Fetch performs one serialised read. The previous in-memory snapshot is passed
 // back to the library so an optional analytics or key failure degrades to a
 // warning instead of blanking the section.
-func (o *OpenRouter) Fetch(ctx context.Context, now time.Time) (routeburn.Snapshot, error) {
+func (o *OpenRouter) Fetch(ctx context.Context, now time.Time) (openrouter.Snapshot, error) {
 	o.mu.Lock()
 	defer o.mu.Unlock()
 
-	snapshot, err := routeburn.Fetch(ctx, o.client, routeburn.FetchOptions{
+	snapshot, err := openrouter.Fetch(ctx, o.client, openrouter.FetchOptions{
 		Now:      now.UTC(),
 		Previous: o.prev,
 	})
 	if err != nil {
-		return routeburn.Snapshot{}, err
+		return openrouter.Snapshot{}, err
 	}
 	stored := snapshot
 	o.prev = &stored
@@ -123,13 +123,13 @@ func (o *OpenRouter) NextRefreshAllowed() time.Time {
 
 // cloneSamples copies the sample history so the renderer never shares a slice
 // with the goroutine that keeps appending to it.
-func cloneSamples(samples map[kimiburn.QuotaKey][]kimiburn.Sample) map[kimiburn.QuotaKey][]kimiburn.Sample {
+func cloneSamples(samples map[kimi.QuotaKey][]kimi.Sample) map[kimi.QuotaKey][]kimi.Sample {
 	if samples == nil {
 		return nil
 	}
-	out := make(map[kimiburn.QuotaKey][]kimiburn.Sample, len(samples))
+	out := make(map[kimi.QuotaKey][]kimi.Sample, len(samples))
 	for key, values := range samples {
-		out[key] = append([]kimiburn.Sample(nil), values...)
+		out[key] = append([]kimi.Sample(nil), values...)
 	}
 	return out
 }

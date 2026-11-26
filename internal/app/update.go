@@ -9,9 +9,9 @@ import (
 	"charm.land/bubbles/v2/spinner"
 	tea "charm.land/bubbletea/v2"
 
+	"github.com/acevedomiguel/burnblocks/openrouter"
 	"github.com/acevedomiguel/dashburn/internal/provider"
 	"github.com/acevedomiguel/dashburn/internal/ui"
-	"github.com/acevedomiguel/routeburn"
 )
 
 // Messages. Each provider has its own tick and result so a slow or failing
@@ -29,7 +29,7 @@ type (
 		err         error
 	}
 	orFetchedMsg struct {
-		snapshot    routeburn.Snapshot
+		snapshot    openrouter.Snapshot
 		nextAllowed time.Time
 		err         error
 	}

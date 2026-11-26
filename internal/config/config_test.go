@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/acevedomiguel/kimiburn"
+	"github.com/acevedomiguel/burnblocks/kimi"
 )
 
 func writeFile(t *testing.T, dir, name, body string) string {
@@ -28,7 +28,7 @@ func TestLoadDefaultsWhenFilesAreMissing(t *testing.T) {
 	if len(warnings) != 0 {
 		t.Fatalf("unexpected warnings: %v", warnings)
 	}
-	if settings.Kimi.BaseURL != kimiburn.DefaultBaseURL {
+	if settings.Kimi.BaseURL != kimi.DefaultBaseURL {
 		t.Errorf("default base URL = %q", settings.Kimi.BaseURL)
 	}
 	if settings.Kimi.RefreshInterval != DefaultRefreshInterval {
@@ -48,7 +48,7 @@ func TestLoadReadsSiblingFiles(t *testing.T) {
 	if len(warnings) != 0 {
 		t.Fatalf("unexpected warnings: %v", warnings)
 	}
-	if settings.Kimi.BaseURL != kimiburn.OverseasBaseURL {
+	if settings.Kimi.BaseURL != kimi.OverseasBaseURL {
 		t.Errorf("base URL = %q", settings.Kimi.BaseURL)
 	}
 	if settings.Kimi.RefreshInterval != 45*time.Second {

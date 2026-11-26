@@ -9,10 +9,10 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
+	"github.com/acevedomiguel/burnblocks/kimi"
+	"github.com/acevedomiguel/burnblocks/openrouter"
 	"github.com/acevedomiguel/dashburn/internal/provider"
 	"github.com/acevedomiguel/dashburn/internal/ui"
-	"github.com/acevedomiguel/kimiburn"
-	"github.com/acevedomiguel/routeburn"
 )
 
 // clock is a settable clock for deterministic scheduling tests.
@@ -36,13 +36,13 @@ func (f *fakeKimi) Fetch(context.Context, time.Time) (provider.KimiResult, error
 func (f *fakeKimi) NextRefreshAllowed() time.Time { return f.next }
 
 type fakeOR struct {
-	result routeburn.Snapshot
+	result openrouter.Snapshot
 	err    error
 	calls  int
 	next   time.Time
 }
 
-func (f *fakeOR) Fetch(context.Context, time.Time) (routeburn.Snapshot, error) {
+func (f *fakeOR) Fetch(context.Context, time.Time) (openrouter.Snapshot, error) {
 	f.calls++
 	return f.result, f.err
 }
@@ -55,29 +55,29 @@ func kimiFixture(now time.Time) provider.KimiResult {
 	used := 0.25
 	reset := now.Add(3 * time.Hour)
 	return provider.KimiResult{
-		Snapshot: kimiburn.Snapshot{
+		Snapshot: kimi.Snapshot{
 			GeneratedAt: now,
-			Quotas: map[kimiburn.QuotaKey]kimiburn.QuotaReading{
-				kimiburn.QuotaLimit5h: {UsedRatio: &used, ResetAt: &reset},
+			Quotas: map[kimi.QuotaKey]kimi.QuotaReading{
+				kimi.QuotaLimit5h: {UsedRatio: &used, ResetAt: &reset},
 			},
-			Runways: map[kimiburn.QuotaKey]kimiburn.RunwayEstimate{},
+			Runways: map[kimi.QuotaKey]kimi.RunwayEstimate{},
 		},
 	}
 }
 
-func orFixture(now time.Time) routeburn.Snapshot {
+func orFixture(now time.Time) openrouter.Snapshot {
 	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-	daily := make([]routeburn.DailyUsage, 0, 30)
+	daily := make([]openrouter.DailyUsage, 0, 30)
 	for i := 0; i < 30; i++ {
-		daily = append(daily, routeburn.DailyUsage{Day: today.AddDate(0, 0, i-29), CreditSpend: 0.4})
+		daily = append(daily, openrouter.DailyUsage{Day: today.AddDate(0, 0, i-29), CreditSpend: 0.4})
 	}
 	days := 100.0
-	return routeburn.Snapshot{
+	return openrouter.Snapshot{
 		GeneratedAt: now,
-		Account:     routeburn.AccountCredits{Remaining: 42.10},
+		Account:     openrouter.AccountCredits{Remaining: 42.10},
 		Daily:       daily,
 		TotalTokens: 1000,
-		Runway:      routeburn.RunwayEstimate{Basis: routeburn.BasisFinite, DaysRemaining: &days},
+		Runway:      openrouter.RunwayEstimate{Basis: openrouter.BasisFinite, DaysRemaining: &days},
 	}
 }
 

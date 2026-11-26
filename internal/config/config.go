@@ -15,7 +15,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/acevedomiguel/kimiburn"
+	"github.com/acevedomiguel/burnblocks/kimi"
 )
 
 // DefaultRefreshInterval is the automatic polling interval each provider uses
@@ -59,7 +59,7 @@ type Overrides struct {
 // DefaultKimi returns kimiburn's built-in non-secret defaults.
 func DefaultKimi() KimiSettings {
 	return KimiSettings{
-		BaseURL:         kimiburn.DefaultBaseURL,
+		BaseURL:         kimi.DefaultBaseURL,
 		RefreshInterval: DefaultRefreshInterval,
 		Keyring:         true,
 		Theme:           "auto",
@@ -251,9 +251,9 @@ func (s Settings) Theme() string {
 			return "auto"
 		}
 	}
-	kimi, or := pick(s.Kimi.Theme), pick(s.OpenRouter.Theme)
-	if kimi == or {
-		return kimi
+	kimiTheme, orTheme := pick(s.Kimi.Theme), pick(s.OpenRouter.Theme)
+	if kimiTheme == orTheme {
+		return kimiTheme
 	}
 	return "auto"
 }

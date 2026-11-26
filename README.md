@@ -3,11 +3,12 @@
 **One read-only terminal dashboard for Kimi Code quota and OpenRouter credits,
 side by side.**
 
-DashBurn imports the [Kimiburn](https://github.com/acevedomiguel/kimiburn) and
-[RouteBurn](https://github.com/acevedomiguel/routeburn) Go libraries, reads the
-credentials those applications already store, and renders both providers on a
-single dense screen. It keeps no cache, sends no inference traffic, and never
-rotates or revokes a credential.
+DashBurn runs the shared [Burn Blocks](https://github.com/acevedomiguel/burnblocks)
+engines for both providers, reads the credentials
+[Kimiburn](https://github.com/acevedomiguel/kimiburn) and
+[RouteBurn](https://github.com/acevedomiguel/routeburn) already store, and
+renders both providers on a single dense screen. It keeps no cache, sends no
+inference traffic, and never rotates or revokes a credential.
 
 > DashBurn only reads data. It talks to the Kimi Code and OpenRouter read-only
 > endpoints, stores nothing on disk, and never invents a value the provider did
@@ -206,12 +207,11 @@ npm ci && npm run check:release-notes   # changelog rendering guard
 
 ## Built on
 
-DashBurn depends on the public Go libraries that Kimiburn and RouteBurn publish
-from their module roots — `github.com/acevedomiguel/kimiburn` and
-`github.com/acevedomiguel/routeburn`. It reads `kimiburn.Snapshot` and
-`routeburn.Snapshot` values and renders them itself; the interactive models and
-credential stores of both applications stay internal. Keep both dependencies on
-their `v1.x.y` lines (a `v2` tag would require a coordinated module-path
+DashBurn depends on `github.com/acevedomiguel/burnblocks`, the shared read-only
+Go library that owns both provider engines. It reads `kimi.Snapshot` and
+`openrouter.Snapshot` values and renders them itself; the interactive models of
+Kimiburn and RouteBurn stay internal to those applications. Keep the dependency
+on its `v1.x.y` line (a `v2` tag would require a coordinated module-path
 migration).
 
 ## License

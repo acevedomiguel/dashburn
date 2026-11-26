@@ -7,7 +7,7 @@ import (
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/acevedomiguel/kimiburn"
+	"github.com/acevedomiguel/burnblocks/kimi"
 )
 
 // sparkGlyphs are the eight block heights used by the usage trend.
@@ -20,7 +20,7 @@ const minTrendSpan = time.Minute
 // out before it resets? "now" is the left edge and the reset is the right edge;
 // ✕ marks the estimated depletion. It returns false when there is no estimate
 // or no future reset to compare against.
-func timelineRow(quota kimiburn.QuotaReading, runway kimiburn.RunwayEstimate, width int, now time.Time, st Styles) (string, bool) {
+func timelineRow(quota kimi.QuotaReading, runway kimi.RunwayEstimate, width int, now time.Time, st Styles) (string, bool) {
 	if quota.ResetAt == nil || !quota.ResetAt.After(now) {
 		return "", false
 	}
@@ -65,7 +65,7 @@ func timelineRow(quota kimiburn.QuotaReading, runway kimiburn.RunwayEstimate, wi
 
 // trendRow draws the retained local samples of the current reset period as a
 // sparkline of used quota, followed by how much was used over that span.
-func trendRow(samples []kimiburn.Sample, reset *time.Time, width int, now time.Time, st Styles) (string, bool) {
+func trendRow(samples []kimi.Sample, reset *time.Time, width int, now time.Time, st Styles) (string, bool) {
 	samples = currentPeriod(samples, reset)
 	if len(samples) < 2 {
 		return "", false
@@ -97,7 +97,7 @@ func trendRow(samples []kimiburn.Sample, reset *time.Time, width int, now time.T
 // sparkline resamples the series into width time buckets, carrying the last
 // reading forward, and scales the buckets between the window's lowest and
 // highest used ratio.
-func sparkline(samples []kimiburn.Sample, width int) string {
+func sparkline(samples []kimi.Sample, width int) string {
 	start := samples[0].ObservedAt
 	span := samples[len(samples)-1].ObservedAt.Sub(start)
 	values := make([]float64, width)
@@ -131,11 +131,11 @@ func sparkline(samples []kimiburn.Sample, width int) string {
 
 // currentPeriod keeps only the samples that belong to the quota's current reset
 // period, so history from before a reset never draws as this period's trend.
-func currentPeriod(samples []kimiburn.Sample, reset *time.Time) []kimiburn.Sample {
+func currentPeriod(samples []kimi.Sample, reset *time.Time) []kimi.Sample {
 	if reset == nil {
 		return nil
 	}
-	out := make([]kimiburn.Sample, 0, len(samples))
+	out := make([]kimi.Sample, 0, len(samples))
 	for _, sample := range samples {
 		if sample.ResetAt.Equal(*reset) {
 			out = append(out, sample)

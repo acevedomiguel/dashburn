@@ -5,13 +5,13 @@ import (
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/acevedomiguel/kimiburn"
+	"github.com/acevedomiguel/burnblocks/kimi"
 )
 
 // kimiPanelSpec names one Kimi quota panel.
 type kimiPanelSpec struct {
 	title      string
-	key        kimiburn.QuotaKey
+	key        kimi.QuotaKey
 	allocation bool
 }
 
@@ -36,16 +36,16 @@ func kimiSection(opts ViewOptions, width, bodyHeight int) []string {
 
 // kimiPanels renders the reported quota panels, two per row when the width
 // allows.
-func kimiPanels(opts ViewOptions, snap *kimiburn.Snapshot, width int) []string {
+func kimiPanels(opts ViewOptions, snap *kimi.Snapshot, width int) []string {
 	specs := []kimiPanelSpec{
-		{title: "5-hour quota", key: kimiburn.QuotaLimit5h},
-		{title: "Monthly membership", key: kimiburn.QuotaLimitMonthTotal},
+		{title: "5-hour quota", key: kimi.QuotaLimit5h},
+		{title: "Monthly membership", key: kimi.QuotaLimitMonthTotal},
 	}
-	if _, ok := snap.Quotas[kimiburn.QuotaLimitMonthCode]; ok {
-		specs = append(specs, kimiPanelSpec{title: "Monthly Code allocation", key: kimiburn.QuotaLimitMonthCode, allocation: true})
+	if _, ok := snap.Quotas[kimi.QuotaLimitMonthCode]; ok {
+		specs = append(specs, kimiPanelSpec{title: "Monthly Code allocation", key: kimi.QuotaLimitMonthCode, allocation: true})
 	}
-	if _, ok := snap.Quotas[kimiburn.QuotaLimit7d]; ok {
-		specs = append(specs, kimiPanelSpec{title: "7-day quota · legacy", key: kimiburn.QuotaLimit7d})
+	if _, ok := snap.Quotas[kimi.QuotaLimit7d]; ok {
+		specs = append(specs, kimiPanelSpec{title: "7-day quota · legacy", key: kimi.QuotaLimit7d})
 	}
 
 	n := 2
@@ -114,7 +114,7 @@ func validRatio(ratio *float64) bool {
 	return v == v && v >= 0 && v <= 1
 }
 
-func runwayStyle(runway kimiburn.RunwayEstimate, st Styles) lipgloss.Style {
+func runwayStyle(runway kimi.RunwayEstimate, st Styles) lipgloss.Style {
 	if runway.Status == "finite" || runway.Status == "depleted" {
 		return st.Error.Bold(st.Enabled)
 	}

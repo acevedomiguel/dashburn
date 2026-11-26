@@ -1,9 +1,10 @@
 # DashBurn project instructions
 
-DashBurn is a read-only terminal dashboard that imports the public Go libraries
-of two sibling applications and shows Kimi Code quota beside OpenRouter credits.
-It is the sibling of [Kimiburn](../kimiburn) and [Routeburn](../routeburn) and
-adapts their Go, Charm, and release patterns.
+DashBurn is a read-only terminal dashboard that shows Kimi Code quota beside
+OpenRouter credits. It consumes the shared Burn Blocks engines
+(`github.com/acevedomiguel/burnblocks`) and reads the credentials its siblings
+[Kimiburn](../kimiburn) and [Routeburn](../routeburn) already store, adapting
+their Go, Charm, and release patterns.
 
 ## Product and credential boundaries
 
@@ -26,9 +27,11 @@ adapts their Go, Charm, and release patterns.
 
 - Module `github.com/acevedomiguel/dashburn`, binary built from
   `./cmd/dashburn`.
-- `internal/provider` is the only package that imports the sibling libraries.
-  It wraps `kimiburn.Fetch` and `routeburn.Fetch` and exposes one read-only
-  source per provider; everything above it depends only on those interfaces.
+- `internal/provider` owns the provider lifecycle: it wraps `kimi.Fetch` and
+  `openrouter.Fetch` from `github.com/acevedomiguel/burnblocks` and exposes one
+  read-only source per provider. The shared snapshot vocabulary
+  (`kimi.Snapshot`, `openrouter.Snapshot`) is used directly by `internal/app`
+  and `internal/ui`; keep fetching confined to `internal/provider`.
 - `internal/ui` renders pure frames and never fetches. `internal/app` holds the
   state machine, scheduling, and injected clocks. `internal/config` reads the
   siblings' configuration; it never writes it.
@@ -61,9 +64,9 @@ adapts their Go, Charm, and release patterns.
 
 - Go directive `1.26.0` in `go.mod`; CI also builds current stable Go.
 - Charm v2 and supporting modules are pinned to the versions the siblings
-  verified. Keep the `kimiburn` and `routeburn` dependencies on their `v1.x.y`
-  lines: a `v2` tag on either module path would break the import until both
-  sides migrate together.
+  verified. `github.com/acevedomiguel/burnblocks` is the only provider
+  dependency; keep it on its `v1.x.y` line, since a `v2` tag would require a
+  coordinated module-path migration.
 - Commit messages are Conventional Commits; releases are derived from them, so
   subjects are lowercase and imperative.
 
