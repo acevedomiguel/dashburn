@@ -1,0 +1,23 @@
+cmd/dashburn/main.go
+  s_58b6f55c0833f4::t_2a31be5e2c2867 239-240
+cmd/dashburn/engine.go
+  s_58b6f55c0833f4::t_8fa683082cd9cc 1-32
+cmd/dashburn/main_test.go
+  s_58b6f55c0833f4::t_b53e4934df568f 90-104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "6a0c2be6b97f6fe52a9b7789f65705938c63da2e",
+  "prompts": {},
+  "sessions": {
+    "s_58b6f55c0833f4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_de8e37bb1ffeg7g6B9LpPtCNn5",
+        "model": "deepseek/deepseek-v4.1-flash"
+      },
+      "human_author": "Miguel Angel Acevedo <acevedomiguel@gmail.com>"
+    }
+  }
+}
