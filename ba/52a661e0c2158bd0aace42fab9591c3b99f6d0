@@ -1,0 +1,14 @@
+README.md
+  h_e179a2b614d4a3 89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "ba52a661e0c2158bd0aace42fab9591c3b99f6d0",
+  "prompts": {},
+  "humans": {
+    "h_e179a2b614d4a3": {
+      "author": "Miguel Angel Acevedo <acevedomiguel@gmail.com>"
+    }
+  }
+}
